@@ -25,6 +25,43 @@ let formulario = document.querySelector("#formPelicula");
 btnCrearPelicula.addEventListener("click", mostrarFormulario);
 formulario.addEventListener("submit", crearPelicula);
 
+cargaInicial();
+
+function cargaInicial() {
+  if (listaPeliculas.length > 0) {
+    // dibujar filas en la tabla
+    listaPeliculas.map((pelicula) => {
+      crearFila(pelicula);
+    });
+  }
+  // else mostrar un mensaje añ usuario que no hay elementos para mostrar
+}
+
+function crearFila(pelicula) {
+  console.log(pelicula);
+  let tablaPelicula = document.querySelector("#listaPeliculas");
+  console.log(tablaPelicula);
+  tablaPelicula.innerHTML += ` <tr>
+<th scope="row">${pelicula.codigo}</th>
+<td>${pelicula.titulo}</td>
+<td>
+ ${pelicula.descripcion}
+</td>
+<td>
+  ${pelicula.imagen}
+</td>
+<td>${pelicula.genero}</td>
+<td>
+  <button class="btn btn-warning">
+    <i class="bi bi-pencil-square"></i>
+  </button>
+  <button class="btn btn-danger">
+    <i class="bi bi-x-square"></i>
+  </button>
+</td>
+</tr>`;
+}
+
 titulo.addEventListener("blur", () => {
   cantidadCaracteresTitulo(titulo);
 });
@@ -52,25 +89,25 @@ function crearPelicula(e) {
     cantidadCaracteresTitulo(titulo) &&
     validarDescripcion(descripcion) &&
     validarImagen(imagen) &&
-    validarGenero(genero) 
-  ){
-  const nuevaPelicula = new Pelicula(
-    codigo.value,
-    descripcion.value,
-    imagen.value,
-    genero.value
-  );
-  console.log(nuevaPelicula);
-  // guardar la pelicula en el arreglo
-  listaPeliculas.push(nuevaPelicula);
-  console.log(listaPeliculas);
-  // guqardar los datos en el localstorage
-  guardarDatosEnLS();
-  // limpiar el formulario
-  limpiarFormulario();
-  // cerrar la ventana modal
-  modalFormPelicula.hide();
-}
+    validarGenero(genero)
+  ) {
+    const nuevaPelicula = new Pelicula(
+      codigo.value,
+      descripcion.value,
+      imagen.value,
+      genero.value
+    );
+    console.log(nuevaPelicula);
+    // guardar la pelicula en el arreglo
+    listaPeliculas.push(nuevaPelicula);
+    console.log(listaPeliculas);
+    // guqardar los datos en el localstorage
+    guardarDatosEnLS();
+    // limpiar el formulario
+    limpiarFormulario();
+    // cerrar la ventana modal
+    modalFormPelicula.hide();
+  }
 }
 
 function limpiarFormulario() {
@@ -78,7 +115,7 @@ function limpiarFormulario() {
   titulo.className = "form-control";
   descripcion.className = "form-control";
   imagen.className = "form-control";
-  genero.className = 'form-control'
+  genero.className = "form-control";
   // resetear la clase de bootstrap form-control
 }
 
