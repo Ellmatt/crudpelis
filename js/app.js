@@ -2,7 +2,7 @@ import Pelicula from "./classPelicula.js";
 import {
   cantidadCaracteresTitulo,
   validarDescripcion,
-  validarGenero,
+  
   validarImagen,
 } from "./validaciones.js";
 
@@ -71,9 +71,9 @@ descripcion.addEventListener("blur", () => {
 imagen.addEventListener("blur", () => {
   validarImagen(imagen);
 });
-genero.addEventListener("blur", () => {
-  validarGenero(genero);
-});
+// genero.addEventListener("blur", () => {
+//   validarGenero(genero);
+// });
 
 function mostrarFormulario() {
   modalFormPelicula.show();
@@ -88,11 +88,12 @@ function crearPelicula(e) {
   if (
     cantidadCaracteresTitulo(titulo) &&
     validarDescripcion(descripcion) &&
-    validarImagen(imagen) &&
-    validarGenero(genero)
+    validarImagen(imagen) 
+    // validarGenero(genero)
   ) {
     const nuevaPelicula = new Pelicula(
       codigo.value,
+      titulo.value,
       descripcion.value,
       imagen.value,
       genero.value
@@ -103,8 +104,17 @@ function crearPelicula(e) {
     console.log(listaPeliculas);
     // guqardar los datos en el localstorage
     guardarDatosEnLS();
+   
     // limpiar el formulario
     limpiarFormulario();
+    // crear fila
+    crearFila(nuevaPelicula)
+    // alet
+    Swal.fire(
+      'Pelicula creada!',
+      'la pelicula fue creada correctamente!',
+      'success'
+    )
     // cerrar la ventana modal
     modalFormPelicula.hide();
   }
