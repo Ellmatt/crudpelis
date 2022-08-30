@@ -38,9 +38,9 @@ function cargaInicial() {
 }
 
 function crearFila(pelicula) {
-  console.log(pelicula);
+ 
   let tablaPelicula = document.querySelector("#listaPeliculas");
-  console.log(tablaPelicula);
+  
   tablaPelicula.innerHTML += ` <tr>
 <th scope="row">${pelicula.codigo}</th>
 <td>${pelicula.titulo}</td>
@@ -55,7 +55,7 @@ function crearFila(pelicula) {
   <button class="btn btn-warning">
     <i class="bi bi-pencil-square"></i>
   </button>
-  <button class="btn btn-danger">
+  <button class="btn btn-danger" onclick="borrarPeliculas('${pelicula.codigo}')">
     <i class="bi bi-x-square"></i>
   </button>
 </td>
@@ -131,4 +131,49 @@ function limpiarFormulario() {
 
 function guardarDatosEnLS() {
   localStorage.setItem("listaPeliculasKey", JSON.stringify(listaPeliculas));
+}
+
+
+window.borrarPeliculas = function (codigo){
+  Swal.fire({
+    title: 'Eliminar pelicula?',
+    text: "Esta por eliminar la pelicula seleccionada y no puedes revertir este paso!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Si, borrar!',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+    console.log(result)
+
+    if (result.isConfirmed) {
+  // buscar en listaPeliculas el codigo de la peli que quiero borrar 
+// opcion 1: findindex, splice(posicion,1 )
+// opcion 2: filter
+// let copiaListaPeliculas = listaPeliculas.filter((pelicula)=>{return pelicula.codigo != codigo})
+let copiaListaPeliculas = listaPeliculas.filter((pelicula)=> pelicula.codigo != codigo) //return impricito
+
+console.log(copiaListaPeliculas)
+// tarea borrar del arreglo listaPeliculas el elemento con el cod recibido por parametro
+listaPeliculas = copiaListaPeliculas;
+  // actualizar el localstorage
+guardarDatosEnLS()
+  // actualizar la tabla
+  
+actualizarTabla();
+      Swal.fire(
+        'Borrado!',
+        'La pelicula fue eliminada correctamente!',
+        'success'
+      )
+    }
+  })
+  
+
+}
+function actualizarTabla (){
+  let tablaPelicula = document.querySelector('#listaPeliculas')
+  tablaPelicula.innerHTML='';
+  cargaInicial();
 }
