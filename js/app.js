@@ -75,9 +75,11 @@ imagen.addEventListener("blur", () => {
 // });
 
 function mostrarFormulario() {
+  limpiarFormulario()
+  
   modalFormPelicula.show();
   codigo.value = uuidv4();
-  
+
 }
 
 function crearPelicula(e) {
@@ -220,4 +222,7 @@ console.log(posicionPelicula)
   actualizarTabla();
   // cerrar ventana modal 
 modalFormPelicula.hide()
+// limpiar formulario
+
+
 }
