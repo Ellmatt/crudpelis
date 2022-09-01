@@ -2,7 +2,6 @@ import Pelicula from "./classPelicula.js";
 import {
   cantidadCaracteresTitulo,
   validarDescripcion,
-  
   validarImagen,
 } from "./validaciones.js";
 
@@ -15,11 +14,12 @@ const modalFormPelicula = new bootstrap.Modal(
 );
 const btnCrearPelicula = document.querySelector("#btnCrearPelicula");
 let codigo = document.querySelector("#codigo");
-// let titulo = documen.getElementById("titulo");
+let titulo = document.querySelector("#titulo");
 let descripcion = document.querySelector("#descripcion");
 let imagen = document.querySelector("#imagen");
 let genero = document.querySelector("#genero");
 let formulario = document.querySelector("#formPelicula");
+let peliculaNueva = true; // si peliculanueva es true enconces crear peli y sino actualizar
 
 // agregar los eventis
 btnCrearPelicula.addEventListener("click", mostrarFormulario);
@@ -38,9 +38,8 @@ function cargaInicial() {
 }
 
 function crearFila(pelicula) {
- 
   let tablaPelicula = document.querySelector("#listaPeliculas");
-  
+
   tablaPelicula.innerHTML += ` <tr>
 <th scope="row">${pelicula.codigo}</th>
 <td>${pelicula.titulo}</td>
@@ -52,7 +51,7 @@ function crearFila(pelicula) {
 </td>
 <td>${pelicula.genero}</td>
 <td>
-  <button class="btn btn-warning">
+  <button class="btn btn-warning" onclick="editarPelicula('${pelicula.codigo}')">
     <i class="bi bi-pencil-square"></i>
   </button>
   <button class="btn btn-danger" onclick="borrarPeliculas('${pelicula.codigo}')">
@@ -78,7 +77,7 @@ imagen.addEventListener("blur", () => {
 function mostrarFormulario() {
   modalFormPelicula.show();
   codigo.value = uuidv4();
-  console.log(uuidv4());
+  
 }
 
 function crearPelicula(e) {
@@ -88,37 +87,45 @@ function crearPelicula(e) {
   if (
     cantidadCaracteresTitulo(titulo) &&
     validarDescripcion(descripcion) &&
-    validarImagen(imagen) 
+    validarImagen(imagen)
     // validarGenero(genero)
   ) {
-    const nuevaPelicula = new Pelicula(
-      codigo.value,
-      titulo.value,
-      descripcion.value,
-      imagen.value,
-      genero.value
-    );
-    console.log(nuevaPelicula);
-    // guardar la pelicula en el arreglo
-    listaPeliculas.push(nuevaPelicula);
-    console.log(listaPeliculas);
-    // guqardar los datos en el localstorage
-    guardarDatosEnLS();
-   
-    // limpiar el formulario
-    limpiarFormulario();
-    // crear fila
-    crearFila(nuevaPelicula)
-    // alet
-    Swal.fire(
-      'Pelicula creada!',
-      'la pelicula fue creada correctamente!',
-      'success'
-    )
-    // cerrar la ventana modal
-    modalFormPelicula.hide();
+    if (peliculaNueva) {
+      generarPelicula();
+    } else {
+      actualizarPelicula();
+    }
   }
 }
+    function generarPelicula() {
+      const nuevaPelicula = new Pelicula(
+        codigo.value,
+        titulo.value,
+        descripcion.value,
+        imagen.value,
+        genero.value
+      );
+      
+      // guardar la pelicula en el arreglo
+      listaPeliculas.push(nuevaPelicula);
+      
+      // guqardar los datos en el localstorage
+      guardarDatosEnLS();
+
+      // limpiar el formulario
+      limpiarFormulario();
+      // crear fila
+      crearFila(nuevaPelicula);
+      // alet
+      Swal.fire(
+        "Pelicula creada!",
+        "la pelicula fue creada correctamente!",
+        "success"
+      );
+      // cerrar la ventana modal
+      modalFormPelicula.hide();
+    }
+  
 
 function limpiarFormulario() {
   formulario.reset();
@@ -133,47 +140,84 @@ function guardarDatosEnLS() {
   localStorage.setItem("listaPeliculasKey", JSON.stringify(listaPeliculas));
 }
 
-
-window.borrarPeliculas = function (codigo){
+window.borrarPeliculas = function (codigo) {
   Swal.fire({
-    title: 'Eliminar pelicula?',
+    title: "Eliminar pelicula?",
     text: "Esta por eliminar la pelicula seleccionada y no puedes revertir este paso!",
-    icon: 'warning',
+    icon: "warning",
     showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    confirmButtonText: 'Si, borrar!',
-    cancelButtonText: 'Cancelar'
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Si, borrar!",
+    cancelButtonText: "Cancelar",
   }).then((result) => {
-    console.log(result)
+    
 
     if (result.isConfirmed) {
-  // buscar en listaPeliculas el codigo de la peli que quiero borrar 
-// opcion 1: findindex, splice(posicion,1 )
-// opcion 2: filter
-// let copiaListaPeliculas = listaPeliculas.filter((pelicula)=>{return pelicula.codigo != codigo})
-let copiaListaPeliculas = listaPeliculas.filter((pelicula)=> pelicula.codigo != codigo) //return impricito
+      // buscar en listaPeliculas el codigo de la peli que quiero borrar
+      // opcion 1: findindex, splice(posicion,1 )
+      // opcion 2: filter
+      // let copiaListaPeliculas = listaPeliculas.filter((pelicula)=>{return pelicula.codigo != codigo})
+      let copiaListaPeliculas = listaPeliculas.filter(
+        (pelicula) => pelicula.codigo != codigo
+      ); //return impricito
 
-console.log(copiaListaPeliculas)
-// tarea borrar del arreglo listaPeliculas el elemento con el cod recibido por parametro
-listaPeliculas = copiaListaPeliculas;
-  // actualizar el localstorage
-guardarDatosEnLS()
-  // actualizar la tabla
-  
-actualizarTabla();
+    
+      // tarea borrar del arreglo listaPeliculas el elemento con el cod recibido por parametro
+      listaPeliculas = copiaListaPeliculas;
+      // actualizar el localstorage
+      guardarDatosEnLS();
+      // actualizar la tabla
+
+      actualizarTabla();
       Swal.fire(
-        'Borrado!',
-        'La pelicula fue eliminada correctamente!',
-        'success'
-      )
+        "Borrado!",
+        "La pelicula fue eliminada correctamente!",
+        "success"
+      );
     }
-  })
-  
-
-}
-function actualizarTabla (){
-  let tablaPelicula = document.querySelector('#listaPeliculas')
-  tablaPelicula.innerHTML='';
+  });
+};
+function actualizarTabla() {
+  let tablaPelicula = document.querySelector("#listaPeliculas");
+  tablaPelicula.innerHTML = "";
   cargaInicial();
+}
+
+window.editarPelicula = function (codigoBuscado) {
+ peliculaNueva = false
+  // mostrar la ventana modal
+  modalFormPelicula.show();
+  // buscar la pelicula que quiero mostrar en el formulario
+  let peliBuscada = listaPeliculas.find(
+    (pelicula) => pelicula.codigo === codigoBuscado
+  );
+
+  // cargar el formulario con los datos
+  codigo.value = peliBuscada.codigo;
+  titulo.value = peliBuscada.titulo;
+  descripcion.value = peliBuscada.descripcion;
+  imagen.value = peliBuscada.imagen;
+  genero.value = peliBuscada.genero;
+};
+
+function actualizarPelicula() {
+  
+  // buscar la pelicula que estoy editando en el arreglo de peliculas
+  console.log(codigo.value)
+let posicionPelicula = listaPeliculas.findIndex((pelicula)=> pelicula.codigo === codigo.value) 
+console.log(posicionPelicula)
+  
+  // actualizar todos los datos del objeto
+  listaPeliculas[posicionPelicula].titulo = titulo.value;
+  listaPeliculas[posicionPelicula].descripcion= descripcion.value;
+  listaPeliculas[posicionPelicula].imagen= imagen.value;
+  listaPeliculas[posicionPelicula].genero= genero.value;
+
+  // actualizar el Ls
+  guardarDatosEnLS();
+  // actualizar la fabla
+  actualizarTabla();
+  // cerrar ventana modal 
+modalFormPelicula.hide()
 }
