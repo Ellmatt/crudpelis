@@ -21,6 +21,6 @@ function crearColumna(pelicula){
 
 function detallePelicula(codigo){
     console.log(codigo)
-    console.log(window.location.origin+'/pages/detalle.html?codigo='+codigo)
-    window.location.href= window.location.origin+'/pages/detalle.html?codigo='+codigo;
+    console.log(window.location.origin+'/pages/detalle.html?codigo='+codigo) //origi nes el dominio donde esta
+    window.location.href= window.location.origin+'/pages/detalle.html?codigo='+codigo; // redreccionar a url valido
 }
